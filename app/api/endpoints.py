@@ -1,8 +1,17 @@
 from fastapi import APIRouter
+from fastapi.responses import RedirectResponse
+
+from schemas import CreateAliasIn, CreateAliasResponse, ErrorResponse
+
 
 router = APIRouter()
 
-@router.get("/{alias_url}")
+
+@router.get(
+    "/{alias_url}",
+    response_class=RedirectResponse,
+    status_code=302
+    )
 async def redirect_from_alias_to_url():
     """Steps:
         1. Get url from cache
@@ -12,8 +21,12 @@ async def redirect_from_alias_to_url():
     """
     pass
 
-@router.post("/create")
-async def create_short_link(url: str, server_url: str, custom_alias: str | None = None):
+
+@router.post(
+    "/create",
+    response_model=CreateAliasResponse
+    )
+async def create_short_link(payload: CreateAliasIn):
     """Steps:
         1. Generate unique ID (snowflake)
         2. Turn ID to base62
