@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from fastapi.responses import RedirectResponse
 
-from schemas import CreateAliasIn, CreateAliasResponse, ErrorResponse
+from app.api.schemas import CreateAliasIn, CreateAliasResponse, ErrorResponse
 
 
 router = APIRouter()
