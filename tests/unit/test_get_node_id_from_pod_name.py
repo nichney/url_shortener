@@ -1,21 +1,7 @@
 import pytest
-import os
-from contextlib import contextmanager
+from tests.confest import in_pod
 
 from app.utils.id_from_pod_name import get_node_id_from_pod_name
-
-
-@contextmanager
-def in_pod(pod_id=123):
-    original_val = os.environ.get("POD_NAME")
-    os.environ["POD_NAME"] = "web-app-" + f"{pod_id}"
-    try:
-        yield
-    finally:
-        if original_val is None:
-            del os.environ["POD_NAME"]
-        else:
-            os.environ["POD_NAME"] = original_val
 
 
 def test_node_id_is_consistent():
