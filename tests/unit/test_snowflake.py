@@ -1,5 +1,5 @@
 import pytest
-from tests.confest import in_pod
+from tests.conftest import in_pod
 
 
 def test_new_id_returns_int():

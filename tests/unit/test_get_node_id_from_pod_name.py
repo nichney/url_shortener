@@ -1,5 +1,5 @@
 import pytest
-from tests.confest import in_pod
+from tests.conftest import in_pod
 
 from app.utils.id_from_pod_name import get_node_id_from_pod_name
 
