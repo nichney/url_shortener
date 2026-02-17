@@ -5,6 +5,9 @@ BASE62_CHARS = string.digits + string.ascii_lowercase + string.ascii_uppercase
 
 
 def to_base62(num: int) -> str:
+    if num < 0:
+        raise ValueError
+        
     if num == 0:
         return BASE62_CHARS[0]
     
