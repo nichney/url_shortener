@@ -1,4 +1,4 @@
-from hash_ring import HashRing
+from app.utils.hash_ring import HashRing
 
 
 class DatabaseManager:
