@@ -1,6 +1,30 @@
 from fastapi import FastAPI
-from app.api import endpoints
 
-app = FastAPI()
+from app.api import endpoints
+from app.database.sharding import get_db_manager
+
+
+app = FastAPI(title="Сократитель ссылок тестовый")
+
+
+@app.on_event("startup")
+async def on_startup():
+    db_manager = get_db_manager()
+    db_manager.create_all_tables()
+
+
+async def get_db_manager():
+    return db_manager
+
 
 app.include_router(endpoints.router)
+
+
+@app.get("/health")
+async def health_check():
+    return {"status": "ok"}
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

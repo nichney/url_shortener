@@ -1,7 +1,7 @@
 import os
 from contextlib import contextmanager
 from typing import Generator
-from sqlmodel import create_engine, Session
+from sqlmodel import create_engine, Session, SQLModel
 from sqlalchemy.orm import sessionmaker
 
 from app.utils.hash_ring import HashRing
@@ -31,6 +31,11 @@ class DatabaseManager:
             )
 
 
+    def create_all_tables(self):
+        for name, engine in self.engines.items():
+            SQLModel.metadata.create_all(bind=engine)
+
+
     def _get_node_name(self, shard_key: str) -> str:
         return self.hash_ring.get_node(shard_key)
 
@@ -58,3 +63,12 @@ class DatabaseManager:
             raise
         finally:
             session.close()
+
+
+db_manager_instance: DatabaseManager | None = None
+
+def get_db_manager() -> DatabaseManager:
+    global db_manager_instance
+    if db_manager_instance is None:
+        db_manager_instance = DatabaseManager()
+    return db_manager_instance
