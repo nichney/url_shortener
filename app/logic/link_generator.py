@@ -1,0 +1,18 @@
+from pydantic import HttpUrl
+
+from app.repositories.link_repo import LinkRepository
+from app.utils.snowflake import new_id
+from app.utils.base62 import to_base62
+
+async def generate_new_short_link(repo: LinkRepository, url: HttpUrl, server_url: HttpUrl, custom_alias: str | None = None) -> HttpUrl:
+    # If custom_alias is not specified by user, we assume snowflake ID in base62 as alias to original link  
+    if custom_alias:
+        shard_key = custom_alias
+        final_id = custom_alias
+    else:
+        final_id = to_base62(new_id())
+        shard_key = final_id
+
+    short_id = await repo.create_link(str(url), final_id)
+
+    return HttpUrl(str(server_url) + short_id)
