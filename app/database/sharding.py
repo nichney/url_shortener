@@ -5,6 +5,7 @@ from sqlmodel import create_engine, Session, SQLModel
 from sqlalchemy.orm import sessionmaker
 
 from app.utils.hash_ring import HashRing
+from app.database import models
 
 
 class DatabaseManager:
