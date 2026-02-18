@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import RedirectResponse
 
 from app.api.schemas import CreateAliasIn, CreateAliasResponse, ErrorResponse
@@ -16,14 +16,14 @@ router = APIRouter()
     response_class=RedirectResponse,
     status_code=302
     )
-async def redirect_from_alias_to_url():
-    """Steps:
-        1. Get url from cache
-        2. If there is no value in cache, turn alias_url to ID and search in database. Usually, alias_url is base62 of ID, but it may be custom alias
-        3. If there is no value in database, return 404
-        4. Write extracted value to cache and return redirect 302
-    """
-    pass
+async def redirect_from_alias_to_url(alias_url: str, repo: LinkRepository = Depends(get_link_repo)):
+    original_url = await repo.get_url_by_alias(alias_url)
+    if not original_url:
+        raise HTTPException(status_code=404, detail="Alias not found")
+
+    # TODO: cache
+
+    return RedirectResponse(url=original_url)
 
 
 @router.post(
