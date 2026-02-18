@@ -1,7 +1,11 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi.responses import RedirectResponse
 
 from app.api.schemas import CreateAliasIn, CreateAliasResponse, ErrorResponse
+from app.repositories.link_repo import LinkRepository
+from app.dependencies import get_link_repo
+
+from app.logic.link_generator import generate_new_short_link
 
 
 router = APIRouter()
@@ -26,11 +30,6 @@ async def redirect_from_alias_to_url():
     "/create",
     response_model=CreateAliasResponse
     )
-async def create_short_link(payload: CreateAliasIn):
-    """Steps:
-        1. Generate unique ID (snowflake)
-        2. Turn ID to base62
-        3. Save (ID, url, custom_alias) to DB
-        4. If custom_alias specified, concatinate it with server_url and return. If not, add base62 ID to server_url and return it
-    """
-    pass
+async def create_short_link(payload: CreateAliasIn, repo: LinkRepository = Depends(get_link_repo)):
+    alias = await generate_new_short_link(repo, payload.url, payload.custom_alias)
+    return CreateAliasResponse(url=payload.url, alias=alias)
