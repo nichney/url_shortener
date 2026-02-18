@@ -1,3 +1,4 @@
+import os
 from contextlib import contextmanager
 from typing import Generator
 from sqlmodel import create_engine, Session
@@ -8,13 +9,16 @@ from app.utils.hash_ring import HashRing
 
 class DatabaseManager:
 
-    def __init__(self, db_configs: dict):
-        """Пример db_configs: db_configs = {
-            'db1': 'postgresql://user:pass@host1/dbname',
-            'db2': 'postgresql://user:pass@host2/dbname', 
-            'db3': 'postgresql://user:pass@host3/dbname'
-            } 
+    def __init__(self):
+        """Пример: DB_SHARDS=db1:postgresql://user:pass@host1/db;db2:postgresql://user:pass@host2/db
         """
+        shards_str = os.getenv("DB_SHARDS", "default:postgresql://user:pass@localhost/db")
+        db_configs = {}
+        for item in shards_str.split(';'):
+            if ":" in item:
+                name, url = item.split(":", 1)
+                db_configs[name] = url
+
         self.hash_ring = HashRing(list(db_configs.keys()))
         self.engines = {name: create_engine(config) for name, config in db_configs.items()}
         self.session_factories = {}
