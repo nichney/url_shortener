@@ -23,7 +23,7 @@ async def redirect_from_alias_to_url(alias_url: str, repo: LinkRepository = Depe
 
     # TODO: cache
 
-    return RedirectResponse(url=original_url)
+    return RedirectResponse(url=original_url, status_code=302)
 
 
 @router.post(

@@ -22,4 +22,4 @@ class LinkRepository:
             link = session.get(Links, short_id)
             if not link:
                 return None
-            return link
+            return link.url
