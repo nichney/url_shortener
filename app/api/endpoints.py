@@ -17,7 +17,7 @@ router = APIRouter()
     status_code=302
     )
 async def redirect_from_alias_to_url(alias_url: str, repo: LinkRepository = Depends(get_link_repo)):
-    original_url = await repo.get_url_by_alias(alias_url)
+    original_url = await repo.get_link(alias_url)
     if not original_url:
         raise HTTPException(status_code=404, detail="Alias not found")
 
