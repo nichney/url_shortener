@@ -13,10 +13,6 @@ async def on_startup():
     db_manager.create_all_tables()
 
 
-async def get_db_manager():
-    return db_manager
-
-
 app.include_router(endpoints.router)
 
 
