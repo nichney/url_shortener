@@ -3,7 +3,6 @@ from pydantic import BaseModel, HttpUrl
 
 class CreateAliasIn(BaseModel):
     url: HttpUrl
-    server_url: HttpUrl
     custom_alias: str | None = None
 
 
