@@ -9,7 +9,3 @@ class CreateAliasIn(BaseModel):
 class CreateAliasResponse(BaseModel):
     url: HttpUrl
     alias: HttpUrl
-
-
-class ErrorResponse(BaseModel):
-    message: str

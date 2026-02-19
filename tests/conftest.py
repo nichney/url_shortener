@@ -1,19 +1,6 @@
 import os
 from contextlib import contextmanager
 
-@contextmanager
-def in_pod(pod_id=123):
-    """deprecated"""
-    original_val = os.environ.get("POD_NAME")
-    os.environ["POD_NAME"] = "web-app-" + f"{pod_id}"
-    try:
-        yield
-    finally:
-        if original_val is None:
-            del os.environ["POD_NAME"]
-        else:
-            os.environ["POD_NAME"] = original_val
-
 
 @contextmanager
 def in_environment(pod_id=123, base_url="https://example.com", shards="default:postgresql://user:pass@localhost/db"):
