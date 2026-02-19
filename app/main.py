@@ -25,7 +25,7 @@ async def serve_frontend():
     return FileResponse(str(FRONTEND_DIR / "index.html"))
 
 
-app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")
+app.mount("/", StaticFiles(directory=str(FRONTEND_DIR)), name="static")
 
 
 @app.on_event("startup")
