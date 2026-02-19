@@ -1,11 +1,11 @@
 import pytest
-from tests.conftest import in_pod
+from tests.conftest import in_environment
 
 from app.utils.id_from_pod_name import get_node_id_from_pod_name
 
 
 def test_node_id_is_consistent():
-    with in_pod():
+    with in_environment():
         id1 = get_node_id_from_pod_name()
         id2 = get_node_id_from_pod_name()
     
@@ -14,10 +14,10 @@ def test_node_id_is_consistent():
 
 
 def test_node_id_different_for_different_pods():
-    with in_pod(pod_id=123):
+    with in_environment(pod_id=123):
         id_alpha = get_node_id_from_pod_name()
     
-    with in_pod(pod_id=124):
+    with in_environment(pod_id=124):
         id_beta = get_node_id_from_pod_name()
     
     assert id_alpha != id_beta
