@@ -9,7 +9,7 @@ async def get_link(repo: LinkRepository, redis_db: RedisManager, alias: str) -> 
     if cache_hit:
         return cache_hit
 
-    original_url = await run_in_threadpool(repo.get_link, alias)
+    original_url = await repo.get_link(alias)
     await run_in_threadpool(redis_db.set_value, alias, original_url, 3600)
 
     return original_url
