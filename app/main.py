@@ -12,20 +12,6 @@ app = FastAPI(title="Сократитель ссылок")
 BASE_DIR = Path(__file__).resolve().parent.parent
 FRONTEND_DIR = BASE_DIR / "frontend"
 
-app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")
-
-
-@app.on_event("startup")
-async def on_startup():
-    db_manager = get_db_manager()
-    db_manager.create_all_tables()
-
-
-@app.get("/")
-async def read_root():
-    # Отдаем index.html из папки frontend
-    return FileResponse(FRONTEND_DIR / "index.html")
-
 
 @app.get("/health")
 async def health_check():
@@ -33,6 +19,19 @@ async def health_check():
 
 
 app.include_router(endpoints.router)
+
+@app.get("/")
+async def serve_frontend():
+    return FileResponse(str(FRONTEND_DIR / "index.html"))
+
+
+app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR / "static")), name="static")
+
+
+@app.on_event("startup")
+async def on_startup():
+    db_manager = get_db_manager()
+    await db_manager.create_all_tables()
 
 
 if __name__ == "__main__":
