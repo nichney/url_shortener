@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import RedirectResponse
 
-from app.api.schemas import CreateAliasIn, CreateAliasResponse, ErrorResponse
+from app.api.schemas import CreateAliasIn, CreateAliasResponse
 from app.repositories.link_repo import LinkRepository
 from app.dependencies import get_link_repo, get_redis_repo
 
@@ -10,6 +10,15 @@ from app.logic.link_getter import get_link
 
 
 router = APIRouter()
+
+
+@router.post(
+    "/create",
+    response_model=CreateAliasResponse
+    )
+async def create_short_link(payload: CreateAliasIn, repo: LinkRepository = Depends(get_link_repo)):
+    alias = await generate_new_short_link(repo, payload.url, payload.custom_alias)
+    return CreateAliasResponse(url=payload.url, alias=alias)
 
 
 @router.get(
@@ -23,12 +32,3 @@ async def redirect_from_alias_to_url(alias_url: str, repo: LinkRepository = Depe
         raise HTTPException(status_code=404, detail="Alias not found")
 
     return RedirectResponse(url=original_url, status_code=302)
-
-
-@router.post(
-    "/create",
-    response_model=CreateAliasResponse
-    )
-async def create_short_link(payload: CreateAliasIn, repo: LinkRepository = Depends(get_link_repo)):
-    alias = await generate_new_short_link(repo, payload.url, payload.custom_alias)
-    return CreateAliasResponse(url=payload.url, alias=alias)
