@@ -16,4 +16,4 @@ async def generate_new_short_link(repo: LinkRepository, url: HttpUrl, custom_ali
 
     short_id = await repo.create_link(str(url), final_id)
 
-    return HttpUrl(str(BASE_URL) + "/" + short_id)
+    return HttpUrl(str(BASE_URL) + "/c/" + short_id)

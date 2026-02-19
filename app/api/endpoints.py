@@ -22,7 +22,7 @@ async def create_short_link(payload: CreateAliasIn, repo: LinkRepository = Depen
 
 
 @router.get(
-    "/{alias_url}",
+    "/c/{alias_url}",
     response_class=RedirectResponse,
     status_code=302
     )
