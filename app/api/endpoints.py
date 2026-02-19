@@ -18,6 +18,8 @@ router = APIRouter()
     )
 async def create_short_link(payload: CreateAliasIn, repo: LinkRepository = Depends(get_link_repo)):
     alias = await generate_new_short_link(repo, payload.url, payload.custom_alias)
+    if not alias:
+        raise HTTPException(status_code=404, detail="Alias already taken")
     return CreateAliasResponse(url=payload.url, alias=alias)
 
 

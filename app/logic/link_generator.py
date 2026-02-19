@@ -14,6 +14,9 @@ async def generate_new_short_link(repo: LinkRepository, url: HttpUrl, custom_ali
         final_id = to_base62(new_id())
         shard_key = final_id
 
-    short_id = await repo.create_link(str(url), final_id)
+    try:
+        short_id = await repo.create_link(str(url), final_id)
+    except Exception:
+        return None
 
-    return HttpUrl(str(BASE_URL) + "/c/" + short_id)
+    return HttpUrl(str(BASE_URL) + "c/" + short_id)
