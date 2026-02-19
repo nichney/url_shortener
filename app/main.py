@@ -13,12 +13,12 @@ async def on_startup():
     db_manager.create_all_tables()
 
 
-app.include_router(endpoints.router)
-
-
 @app.get("/health")
 async def health_check():
     return {"status": "ok"}
+
+
+app.include_router(endpoints.router)
 
 
 if __name__ == "__main__":
