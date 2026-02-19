@@ -1,3 +1,4 @@
+import redis
 from fastapi.concurrency import run_in_threadpool
 
 from app.repositories.link_repo import LinkRepository
@@ -10,7 +11,10 @@ async def get_link(repo: LinkRepository, redis_db: RedisManager, alias: str) -> 
         return cache_hit
 
     original_url = await repo.get_link(alias)
-    await run_in_threadpool(redis_db.set_value, alias, original_url, 3600)
+    try:
+        await run_in_threadpool(redis_db.set_value, alias, original_url, 3600)
+    except redis.exceptions.DataError:
+        return None
 
     return original_url
 
