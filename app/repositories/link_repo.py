@@ -19,7 +19,7 @@ class LinkRepository:
 
     async def get_link(self, short_id: str):
         with self.db.get_session(short_id) as session:
-            link = session.get(Links, short_id)
+            link = await session.get(Links, short_id)
             if not link:
                 return None
             return link.url
