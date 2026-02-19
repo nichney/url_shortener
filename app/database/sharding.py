@@ -1,5 +1,5 @@
 import os
-from contextlib import contextmanager
+from contextlib import contextmanager, asynccontextmanager
 from typing import Generator
 from sqlmodel import SQLModel
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
@@ -42,8 +42,8 @@ class DatabaseManager:
         return self.hash_ring.get_node(shard_key)
 
 
-    @contextmanager
-    def get_session(self, shard_key: str) -> Generator[AsyncSession, None, None]:
+    @asynccontextmanager
+    async def get_session(self, shard_key: str) -> Generator[AsyncSession, None, None]:
         """
         Контекстный менеджер для получения сессии нужного шарда.
         Гарантирует commit при успехе и rollback при ошибке.
@@ -59,12 +59,12 @@ class DatabaseManager:
         
         try:
             yield session
-            session.commit()
+            await session.commit()
         except Exception:
-            session.rollback()
+            await session.rollback()
             raise
         finally:
-            session.close()
+            await session.close()
 
 
 db_manager_instance: DatabaseManager | None = None
