@@ -3,8 +3,8 @@ from contextlib import contextmanager
 
 
 @contextmanager
-def in_environment(pod_id=123, base_url="https://example.com", shards="default:postgresql://user:pass@localhost/db"):
-    env_variables = ["POD_NAME", "BASE_URL", "DB_SHARDS"]
+def in_environment(pod_id=123, base_url="https://example.com", shards="default:postgresql://user:pass@localhost/db", redis="default:redis://localhost:6379"):
+    env_variables = ["POD_NAME", "BASE_URL", "DB_SHARDS", "REDIS_SHARDS"]
    
     original_values = {
         name: value 
@@ -15,6 +15,7 @@ def in_environment(pod_id=123, base_url="https://example.com", shards="default:p
     os.environ["POD_NAME"] = "web-app-" + f"{pod_id}"
     os.environ["BASE_URL"] = base_url
     os.environ["DB_SHARDS"] = shards
+    os.environ["REDIS_SHARDS"] = redis
     try:
         yield
     finally:

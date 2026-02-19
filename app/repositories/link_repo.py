@@ -9,7 +9,7 @@ class LinkRepository:
 
 
     async def create_link(self, original_url: str, short_id: str) -> str:
-        with self.db.get_session(short_id) as session:
+        async with self.db.get_session(short_id) as session:
             new_link = Links(id=short_id, url=original_url)
             session.add(new_link)
 

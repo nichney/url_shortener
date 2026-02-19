@@ -1,8 +1,8 @@
 import os
 from contextlib import contextmanager
 from typing import Generator
-from sqlmodel import create_engine, Session, SQLModel
-from sqlalchemy.orm import sessionmaker
+from sqlmodel import SQLModel
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 
 from app.utils.hash_ring import HashRing
 from app.database import models
@@ -21,12 +21,12 @@ class DatabaseManager:
                 db_configs[name] = url
 
         self.hash_ring = HashRing(list(db_configs.keys()))
-        self.engines = {name: create_engine(config) for name, config in db_configs.items()}
+        self.engines = {name: create_async_engine(config) for name, config in db_configs.items()}
         self.session_factories = {}
         for name in self.engines:
-            self.session_factories[name] = sessionmaker(
+            self.session_factories[name] = async_sessionmaker(
                 bind=self.engines[name],
-                class_=Session,
+                class_=AsyncSession,
                 autocommit=False,
                 autoflush=False
             )
@@ -58,12 +58,12 @@ class DatabaseManager:
         
         try:
             yield session
-            session.commit()
+            await session.commit()
         except Exception:
-            session.rollback()
+            await session.rollback()
             raise
         finally:
-            session.close()
+            await session.close()
 
 
 db_manager_instance: DatabaseManager | None = None
