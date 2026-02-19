@@ -32,9 +32,10 @@ class DatabaseManager:
             )
 
 
-    def create_all_tables(self):
+    async def create_all_tables(self):
         for name, engine in self.engines.items():
-            SQLModel.metadata.create_all(bind=engine)
+            async with engine.begin() as conn:
+                await conn.run_sync(SQLModel.metadata.create_all)
 
 
     def _get_node_name(self, shard_key: str) -> str:
@@ -42,7 +43,7 @@ class DatabaseManager:
 
 
     @contextmanager
-    def get_session(self, shard_key: str) -> Generator[Session, None, None]:
+    def get_session(self, shard_key: str) -> Generator[AsyncSession, None, None]:
         """
         Контекстный менеджер для получения сессии нужного шарда.
         Гарантирует commit при успехе и rollback при ошибке.
@@ -58,12 +59,12 @@ class DatabaseManager:
         
         try:
             yield session
-            await session.commit()
+            session.commit()
         except Exception:
-            await session.rollback()
+            session.rollback()
             raise
         finally:
-            await session.close()
+            session.close()
 
 
 db_manager_instance: DatabaseManager | None = None
