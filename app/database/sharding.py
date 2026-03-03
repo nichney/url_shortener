@@ -6,14 +6,13 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sess
 
 from app.utils.hash_ring import HashRing
 from app.database import models
+from app.config.settings import get_settings
 
 
 class DatabaseManager:
 
     def __init__(self):
-        """Пример: DB_SHARDS=db1:postgresql://user:pass@host1/db;db2:postgresql://user:pass@host2/db
-        """
-        shards_str = os.getenv("DB_SHARDS", "default:postgresql://user:pass@localhost/db")
+        shards_str = get_settings().db_shards
         db_configs = {}
         for item in shards_str.split(';'):
             if ":" in item:

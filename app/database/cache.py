@@ -3,6 +3,8 @@ import redis
 from typing import Optional
 from app.utils.hash_ring import HashRing
 
+from app.config.settings import get_settings
+
 
 class RedisShard:
 
@@ -24,11 +26,7 @@ class RedisShard:
 class RedisManager:
 
     def __init__(self):
-        """
-        Формат: shardName:master_url|slave1_url,slave2_url;shardName2:...
-        Пример: SHARD1:redis://m1:6379|redis://s1:6379;SHARD2:redis://m2:6379
-        """
-        raw_config = os.getenv("REDIS_SHARDS", "default:redis://localhost:6379")
+        raw_config = get_settings().redis_shards
         self.shards = {}
         
         for item in raw_config.split(';'):
